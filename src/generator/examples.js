@@ -12,11 +12,10 @@ module.exports = function() {
         if (!_.get(definition, exampleKey)) {
           // If the example is empty, set the schema as the example 
             if(_.isEmpty(example)) example = schema;
-            console.log(exampleKey)
             if (example?.properties) { // If the schema has properties, build the example object and set it in the definition
                 const exampleBuild = buildExampleObject(example.properties); // Build the example object
                 // If the example object has the required fields, set it in the definition
-                if (hasRequiredFields(exampleBuild, example?.required || [])) {
+                if (hasRequiredFields(exampleBuild, example?.required || []) && !_.isEmpty(exampleBuild)){
                   _.set(definition, exampleKey, { value: exampleBuild });
                 }
             }
