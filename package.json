@@ -1,0 +1,16 @@
+{
+  "name": "Convert schemas to examples",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "chai": "^5.1.1",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "mocha": "^10.4.0",
+    "path": "^0.12.7",
+    "sinon": "^18.0.0",
+    "yargs": "^17.7.2"
+  }
+}
