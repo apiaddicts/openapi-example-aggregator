@@ -1,0 +1,77 @@
+openapi: 3.0.0
+info:
+  title: Example OpenAPI with allOf
+  version: 1.0.0
+paths:
+  /usuarios/{id}:
+    get:
+      summary: Get user information
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/UsuarioBase'
+                  - $ref: '#/components/schemas/DetallesUsuario'
+components:
+  schemas:
+    UsuarioBase:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+        nombre:
+          type: string
+          description: User's name
+        email:
+          type: string
+          description: User's email
+      example:
+        id: "789"
+        nombre: "Carlos"
+        email: "carlos@example.com"
+
+    DetallesUsuario:
+      type: object
+      properties:
+        direccion:
+          type: object
+          properties:
+            calle:
+              type: string
+              description: Street of user's address
+            numero:
+              type: integer
+              description: Number of user's address
+            ciudad:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  description: Name of the city
+                codigoPostal:
+                  type: string
+                  description: Postal code of the city
+              required:
+                - nombre
+        telefono:
+          type: string
+          description: User's phone number
+      required:
+        - telefono
+      example:
+        direccion:
+          calle: "Calle Example"
+          numero: 123
+          ciudad:
+            nombre: "City Example"
+            codigoPostal: "12345"

@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: Example API
+  description: This is an example API that uses references for its responses and schemas.
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: Retrieves a list of users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successfully retrieved list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersResponse'
+              examples:
+                example1:
+                  $ref: '#/components/examples/UsersResponseExample'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example1:
+                  $ref: '#/components/examples/ErrorResponseExample'
+components:
+  schemas:
+    UsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+  examples:
+    UsersResponseExample:
+      value:
+        users:
+          - id: 1
+            name: John Doe
+            email: john.doe@example.com
+          - id: 2
+            name: Jane Smith
+            email: jane.smith@example.com
+    ErrorResponseExample:
+      value:
+        code: 500
+        message: Internal server error

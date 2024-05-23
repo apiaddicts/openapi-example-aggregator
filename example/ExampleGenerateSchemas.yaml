@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Example API
+  description: This is an example API that uses references for its responses and schemas.
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: Retrieves a list of users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successfully retrieved list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersResponse' # This will be created from here at the same level of schemas the property examples
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    UsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      example: # This example when generating the new file, will be added to responses that do not have examples and reference them
+        users:
+          - id: 1
+            name: John Doe
+            email: john.doe@example.com
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+    ErrorResponse: # Will generate example based on examples from each property
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: Internal server error
