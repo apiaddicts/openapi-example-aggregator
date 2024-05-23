@@ -17,7 +17,6 @@ module.exports = (function () {
 
     // If the example is not set in the definition , try with example build from the schema
     if(!_.get(definition, exampleKey)){ 
-
       // If the example has properties and the properties are verified, set the example in the definition
       if(verifyProperties(example.properties, example.required || []) && !_.isEmpty(example.properties)) {
         console.info('[32m%s[0m',`Example generated for ${exampleKey}`);
@@ -99,7 +98,6 @@ const buildExample = (schema, definition) => {
       } else if (propertySchema.items) { // If the property schema has items
 
         example.properties[property] = []; // Create an empty array in the example properties that not error
-        example.example[property] = []; // Create an empty array in the example example that not error
 
         if (propertySchema.items.example) { // If the property schema items has an example, set it in the example properties
           example.properties[property].push(propertySchema.items.example);
@@ -110,6 +108,8 @@ const buildExample = (schema, definition) => {
             example.properties[property].push(itemsExample.properties);
           }          
           if(!_.isEmpty(itemsExample.example)) { // Check if itemsExample.example is not empty
+            
+            example.example[property] = []; // Create an empty array in the example example that not error
             example.example[property].push(itemsExample.example);
           }
           example.required = _.union(example.required,itemsExample.required.map((item) => `${property}.${item}`));
