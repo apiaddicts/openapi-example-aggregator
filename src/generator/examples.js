@@ -12,7 +12,7 @@ module.exports = (function () {
     if(verifyProperties(example.example, example.required || []) && !_.isEmpty(example.example)) { 
       _.set(definition, exampleKey, { value: example.example });
 
-      //console.info('[32m%s[0m',`Example generated for ${exampleKey}`); //Success message in console
+      console.info('[32m%s[0m',`Example generated for ${exampleKey}`); //Success message in console
     }
 
     // If the example is not set in the definition , try with example build from the schema
@@ -34,16 +34,25 @@ module.exports = (function () {
 })();
 
 
-const fetchExample = (schema, definition) => {
+
+// Function to fetch the example of the schema
+const fetchExample = (schema, definition) => { 
   return require("../parser/refs")(schema, definition);
 };
 
+
+// Function to verify if the properties are in the object
 const verifyProperties = (obj, properties) => {
+  // Iterate through the properties and check if they are in the object
   return properties.every((property) => {
-    const propertyPath = property.split(".").slice(0, -1);
-    if(_.isArray(_.get(obj, propertyPath))){
+
+    const propertyPath = property.split(".").slice(0, -1);  // Get the property path in constant propertyPath
+    if(_.isArray(_.get(obj, propertyPath))){ 
+      
+      // If the property is an array, iterate through the array and check if the properties are in the object
       return _.get(obj, propertyPath).every((item) =>  verifyProperties(item, [property.split(".").pop()]));
     } 
+    // Return if the property is in the object
     return _.has(obj, property);
   });
 };
@@ -88,7 +97,7 @@ const buildExample = (schema, definition) => {
       if (propertySchema.example) { // If the property schema has an example, set it in the example properties
         _.set(example.properties, property, propertySchema.example);
       } else if (propertySchema.items) { // If the property schema has items
-        
+
         example.properties[property] = []; // Create an empty array in the example properties that not error
         example.example[property] = []; // Create an empty array in the example example that not error
 
