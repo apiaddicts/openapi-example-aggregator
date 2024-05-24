@@ -31,7 +31,6 @@ Object.keys(global.definition.paths).forEach(path => {
             const property = response?.['$ref']?.split('/').slice(1).join('.') ?? `paths.${path}.${method}.responses.${key}`;
             const schemaPath = `${property}.content.application/json.schema`; // Get the schema from the definition
             const name = _.lowerCase(_.get(global.definition, schemaPath)?.['$ref']?.split('/').pop() || key).replace(/[^a-zA-Z0-9]/g, '-'); // Get the name of the response
-            
             // If the schema has an example, set it in the definition 
             if(_.get(global.definition, schemaPath)?.['example'] || !_.get(global.definition, schemaPath)?.['$ref']){  
                 
