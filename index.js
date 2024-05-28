@@ -3,6 +3,8 @@
 'use strict'
 
 const _ = require('lodash');
+const { getName, getProperty } = require('./src/utils/schemaUtils');
+
 const argv = require('yargs')(process.argv.slice(2))
     .usage('Usage: $0 -f [file]')
     .option('f', {
@@ -17,48 +19,45 @@ const argv = require('yargs')(process.argv.slice(2))
     .argv;
 
 global.definition = require('./src/parser/definition.js')();
-// Iterate through paths and methods to add microcks operations and examples
+
 Object.keys(global.definition.paths).forEach(path => {
 
     Object.keys(global.definition.paths[path]).forEach(method => {
-        // Get the method object from the definition that contains the responses
         
         const methodObj = global.definition.paths[path][method];
-        // Iterate through responses to add examples
+
         Object.keys(methodObj.responses ?? []).forEach(key => {
 
-            const response = methodObj.responses[key]; // Get the response object actually being iterated 
-            const property = response?.['$ref']?.split('/').slice(1).join('.') ?? `paths.${path}.${method}.responses.${key}`;
-            const schemaPath = `${property}.content.application/json.schema`; // Get the schema from the definition
-            const name = _.lowerCase(_.get(global.definition, schemaPath)?.['$ref']?.split('/').pop() || key).replace(/[^a-zA-Z0-9]/g, '-'); // Get the name of the response
-            // If the schema has an example, set it in the definition 
+            const response = methodObj.responses[key]; 
+            const property = getProperty(response, path, method, key);
+            const schemaPath = `${property}.content.application/json.schema`; 
+            const name = getName(schemaPath, key);
+
             if(_.get(global.definition, schemaPath)?.['example'] || !_.get(global.definition, schemaPath)?.['$ref']){  
                 
-                const exampleKey = `${property}.content.application/json.examples.example-schema-${name}`; // Create the example key in the definitionç
-                if(_.get(global.definition, schemaPath)?.['example']){ //If exist in the schema the property example , I add it to the definition
-                    _.set(global.definition, exampleKey, { value: _.get(global.definition, schemaPath)?.['example'] }); // Set the example in the definition
+                const exampleKey = `${property}.content.application/json.examples.example-schema-${name}`; 
+
+                if(_.get(global.definition, schemaPath)?.['example']){ 
+                    _.set(global.definition, exampleKey, { value: _.get(global.definition, schemaPath)?.['example'] }); 
                 }
             } 
-            //If the response is component reference, get the schema and example from the reference
+            
             if (response?.['$ref'] && !_.get(global.definition, `${property}.content.application/json.examples`)) {
 
-                //If exist in the schema the property example, I delete it
                 if(_.get(global.definition, `${property}.content.application/json.example`)){
                     _.unset(global.definition, `${property}.content.application/json.example`)
                 }
-                // Create the example key in the definition with format #/components/responses/{name_of_response}.content.application/json.examples.example-{name_of_response}
+
                 const exampleKey = `${property}.content.application/json.examples.example-schema-${name}`; 
-                // Add example to the schema in the definition 
+
                 require('./src/generator/examples.js')(_.get(global.definition, schemaPath), global.definition, exampleKey);
             
-            // If the response is not a component reference, and it has a schema and no example, get the example from the schema if it exists
-            // Existence is controlled by the example generator
+
             } else if (_.get(response, 'content.application/json.schema') && !_.get(response, 'content.application/json.examples')) {
 
-                const schemaPath = `${property}.content.application/json.schema`; // Get the schema path in the definition
-                // Create the example key in the definition with format paths.{path}.{method}.responses.{key}.content.application/json.examples.example-{key}
+                const schemaPath = `${property}.content.application/json.schema`; 
                 const exampleKey = `${property}.content.application/json.examples.example-schema-${name}`; 
-                // Add example to the schema in the definition
+
                 require('./src/generator/examples.js')(_.get(global.definition, schemaPath), global.definition, exampleKey);               
             }
         });
@@ -66,6 +65,4 @@ Object.keys(global.definition.paths).forEach(path => {
 });
 
 
-
-
-require('./src/generator/file.js')(); // Generate the new file with the operations and examples
+require('./src/generator/file.js')();
