@@ -3,27 +3,29 @@
 const _ = require('lodash')
 
 module.exports = function () {
-    // Function to verify if the properties are in the object
-    return function verifyProperties(obj, properties) {
-        // Iterate through the properties and check if they are in the object
-        return properties.every((property) => {
+
+  return function verifyProperties(obj, properties) {
+    return properties.every((property) => {
       
-          const propertyPath = property.split(".").slice(0, -1);  // Get the property path in constant propertyPath
+          const propertyPath = property.split(".").slice(0, -1);  
       
-          if (_.isArray(_.get(obj, propertyPath))) { 
+          if (_.isArray(_.get(obj, propertyPath))) {
           
-            // If the property is an array, iterate through the array and check if the properties are in the object
-            return _.get(obj, propertyPath).every((item) => verifyProperties(item, [property.split(".").pop()]));
+            const propertie = [ property.split(".").pop() ]
+                        
+            return _.get(obj, propertyPath).every((item) => verifyProperties(item, propertie ));
           
-          } else if(_.isArray(_.get(obj , propertyPath[0]))) {
+          } else if (_.isArray(_.get(obj, propertyPath[0]))) {
       
-              const subproperties = properties.map(el => el.split('.').slice(1).join('.')) 
-              return _.get(obj, propertyPath[0]).every((item) => verifyProperties(item , subproperties))
-      
-          } else 
+            const subproperties = properties.map(el => el.split('.').slice(1).join('.'))
             
-             // Return if the property is in the object
+            return _.get(obj, propertyPath[0]).every((item) => verifyProperties(item, subproperties))
+      
+          } else {
+            
             return _.has(obj, property);
           }
-      )}
+        }
+    );
+  }
 }
