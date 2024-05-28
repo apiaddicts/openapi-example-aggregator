@@ -1,0 +1,25 @@
+{
+  "prop1": {
+    "subprop1": {
+      "subsubprop1": "value1"
+    },
+    "subprop2": [
+      {
+        "nestedProp1": "nestedValue1",
+        "nestedProp2": "nestedValue2"
+      },
+      {
+        "nestedProp2": "nestedValue2"
+      }
+    ]
+  },
+  "prop2": "value2",
+  "prop3": [
+    {
+      "arrayProp1": "arrayValue1"
+    },
+    {
+      "arrayProp1": "arrayValue2"
+    }
+  ]
+}

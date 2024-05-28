@@ -1,0 +1,124 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Servicio de Gestión de Libros",
+    "description": "API para gestionar una biblioteca de libros",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/libros": {
+      "get": {
+        "summary": "Obtener todos los libros",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Books"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear un nuevo libro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Libro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Libro creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Libro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/libros/{id}": {
+      "get": {
+        "summary": "Obtener detalles de un libro",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID del libro a obtener",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/BookById"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "BookById": {
+        "description": "Detalles del libro solicitado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Libro"
+            }
+          }
+        }
+      },
+      "Books": {
+        "description": "Lista de libros",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ListaLibros"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Libro": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 123
+          },
+          "titulo": {
+            "type": "string",
+            "example": "El nombre del viento"
+          },
+          "autor": {
+            "type": "string",
+            "example": "Patrick Rothfuss"
+          },
+          "año_publicacion": {
+            "type": "integer",
+            "example": 2007
+          }
+        }
+      },
+      "ListaLibros": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Libro"
+        }
+      }
+    }
+  }
+}

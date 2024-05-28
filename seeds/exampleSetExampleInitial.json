@@ -1,0 +1,125 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Pet Management Service",
+      "description": "API to manage a pet inventory",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8000"
+      }
+    ],
+    "paths": {
+      "/pets": {
+        "get": {
+          "summary": "Get all pets",
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Pets"
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new pet",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Pet created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/pets/{id}": {
+        "get": {
+          "summary": "Get pet details",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "description": "ID of the pet to retrieve",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/PetById"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "responses": {
+        "PetById": {
+          "description": "Details of the requested pet",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pet"
+              }
+            }
+          }
+        },
+        "Pets": {
+          "description": "List of pets",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetList"
+              }
+            }
+          }
+        }
+      },
+      "schemas": {
+        "Pet": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 123
+            },
+            "name": {
+              "type": "string",
+              "example": "Fido"
+            },
+            "species": {
+              "type": "string",
+              "example": "Dog"
+            },
+            "age": {
+              "type": "integer",
+              "example": 4
+            }
+          }
+        },
+        "PetList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Pet"
+          }
+        }
+      }
+    }
+  }
+  
