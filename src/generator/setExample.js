@@ -4,7 +4,6 @@ const _ = require("lodash");
 const verifyProperties = require("../utils/verifyProperties")(); 
 const createComponent = require("./createComponent")(); 
 
-// Function to set the example of the schema
 module.exports = function () {
   return function setExample(definition, example, exampleKey, requiredProperties = []) {
 
