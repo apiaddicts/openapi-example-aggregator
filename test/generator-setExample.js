@@ -9,7 +9,6 @@ const definition = require("../seeds/exampleSetExampleInitial.json");
 
 describe("generator-setExample", () => {
 
-    //Deberia fallar si el example el nulo
     it("should be false if the object is empty, null or undefiend", () => {
   
 
