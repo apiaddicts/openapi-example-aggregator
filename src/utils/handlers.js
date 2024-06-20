@@ -55,9 +55,15 @@ const handleProperties = (schema, example, definition, depth) => {
         break;
       default:
         const propertyExample =  require('../generator/buildExample')(propertySchema, definition, depth + 1);
+        
         if (!_.isEmpty(propertyExample.properties)) {
           example.properties[property] = propertyExample.properties;
         }
+
+        if (!_.isEmpty(propertyExample.example)) {
+          _.set(example.example, property, propertyExample.example);
+        }
+
         example.required = _.union(example.required, propertyExample.required.map((item) => `${property}.${item}`));
         break;
     }
@@ -65,25 +71,22 @@ const handleProperties = (schema, example, definition, depth) => {
 };
 
 const handleItems = (schema, example, definition, depth, property = null) => {
-  let arrProperties = _.isNull(property) ? example.properties : example.properties[property];
-  arrProperties = [];
-  
+  let arrProperties = property === null ? example.properties : (example.properties[property] = []);
+
   if (schema.items.example) {
     arrProperties.push(schema.items.example);
   } else {
-
     const itemsExample = require('../generator/buildExample')(schema.items, definition, depth + 1);
-    
+
     if (!_.isEmpty(itemsExample.properties)) {
       arrProperties.push(itemsExample.properties);
     }
-    
+
     if (!_.isEmpty(itemsExample.example)) {
-      let arrExample = _.isNull(property) ? example.example : example.example[property];
-      arrExample = [];
+      let arrExample = property === null ? example.example : (example.example[property] = []);
       arrExample.push(itemsExample.example);
     }
-    
+
     example.required = _.union(example.required, itemsExample.required);
   }
 };

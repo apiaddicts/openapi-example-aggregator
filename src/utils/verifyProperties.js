@@ -7,7 +7,7 @@ module.exports = function () {
   return function verifyProperties(obj, properties) {
     return properties.every((property) => {
       
-          const propertyPath = property.split(".").slice(0, -1);  
+          const propertyPath = property.split(".").slice(0, -1) ;  
       
           if (_.isArray(_.get(obj, propertyPath))) {
           

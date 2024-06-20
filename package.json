@@ -1,8 +1,9 @@
 {
   "name": "Convert schemas to examples",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "debug": "node --inspect-brk index.js -f ./index.yaml"
   },
   "dependencies": {
     "chai": "^5.1.1",

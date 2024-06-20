@@ -14,6 +14,10 @@ module.exports = function () {
     if (depth > MAX_DEPTH_LEVEL) {
       return example;
     }
+
+    if (_.isEmpty(schema)) {
+      return example;
+    }
   
     switch(!_.isEmpty(example)) {
       
@@ -38,7 +42,7 @@ module.exports = function () {
         handleItems(schema, example, definition, depth);
         break;
       default:
-        break;
+      break;
     }
   
     return example;
