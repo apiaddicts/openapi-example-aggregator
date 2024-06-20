@@ -1,7 +1,7 @@
 'use strict'
 
 function eachRecursive(obj , definition) {
-	let newObject = {}
+	let newObject = Array.isArray(obj) ? [] : {}
 	for (var k in obj) {
 		if (typeof obj[k] == "object" && obj[k] !== null) {
 			eachRecursive(obj[k] , definition);
@@ -20,7 +20,7 @@ function eachRecursive(obj , definition) {
 
 
 function findObject(obj, propertiesArray) {
-	if(propertiesArray.length < 1) {
+	if(propertiesArray.length < 1 || !obj) {
 		return obj
 	}
 	let property = propertiesArray.shift()
