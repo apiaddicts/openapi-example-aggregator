@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: Complex Example API
+  description: >-
+    Esta API demustra varios esquemas anidados con propiedades requeridas y ejemplos a nivel de esquema y propiedades.
+    Lo que se quiere mostrar con este ejemplo es que se pueden generar esquemas anidados con ejemplos y propiedades requeridas.
+
+    Este ejemplo por defecto es exitoso , pero para poner a prueba estos requeridos se tiene comentado la propiedad contacts en el esquema Address.
+    # - contacts
+
+    Habilitar esta propiedad y ver que el script no puede generar el ejemplo debido a que no tiene un ejemplo a nivel de esquema.
+
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: Retrieves a list of users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successfully retrieved list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersList'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    UsersList:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      required:
+        - users
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        name:
+          type: string
+          example: 'Alice Johnson'
+        email:
+          type: string
+          format: email
+          example: 'alice.johnson@example.com'
+        address:
+          $ref: '#/components/schemas/Address'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+      required:
+        - id
+        - name
+        - email
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+          example: '123 Main St'
+        city:
+          type: string
+          example: 'Springfield'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+      required:
+        - street
+        - city
+        # - contacts
+    Contact:
+      type: object
+      properties:
+        contactType:
+          type: string
+        phoneNumbers:
+          type: array
+          items:
+            type: string
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'vip'
+        description:
+          type: string
+          example: 'VIP user'
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+      required:
+        - code
+        - message
+      example:
+        code: 500
+        message: Internal server error
