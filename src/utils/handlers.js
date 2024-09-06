@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const MAX_DEPTH = 15;
 
 const fetchExample = (schema, definition) => require("../parser/refs")(schema, definition);
 
@@ -68,7 +69,12 @@ const handleProperties = (schema, example, definition, depth) => {
   }
 };
 
-const handleRequiredReferences = (schema, example, definition, parentPath = '') => {
+const handleRequiredReferences = (schema, example, definition, parentPath = '' , depth = 0) => {
+
+  if (depth > MAX_DEPTH) {
+    return;
+  }
+
   if (schema.properties) {
     Object.keys(schema.properties).forEach((property) => {
       const propertySchema = schema.properties[property];
@@ -79,17 +85,17 @@ const handleRequiredReferences = (schema, example, definition, parentPath = '') 
       }
 
       if (propertySchema.type === 'object') {
-        handleRequiredReferences(propertySchema, example, definition, currentPath);
+        handleRequiredReferences(propertySchema, example, definition, currentPath, depth + 1);
       } else if (propertySchema.type === 'array' && propertySchema.items && propertySchema.items.$ref) {
         const arrayRefSchema = fetchExample(propertySchema.items, definition);
-        handleRequiredReferences(arrayRefSchema, example, definition, currentPath);
+        handleRequiredReferences(arrayRefSchema, example, definition, currentPath, depth + 1);
 
         if (arrayRefSchema.required) {
           example.required = _.union(example.required, arrayRefSchema.required.map((item) => `${currentPath}.${item}`));
         }
       } else if (propertySchema.$ref) {
         const refSchema = fetchExample(propertySchema, definition);
-        handleRequiredReferences(refSchema, example, definition, currentPath);
+        handleRequiredReferences(refSchema, example, definition, currentPath, depth + 1);
       }
     });
   }
