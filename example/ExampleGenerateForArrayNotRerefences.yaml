@@ -1,0 +1,103 @@
+openapi: 3.0.3
+info:
+  title: Example API
+  description: >-
+    Aqui la prueba de este esquema , su objetivo es ver la profundidad de los esquemas y que no se referencien.
+
+    Este ejemplo sirve para ver una cosa importante y esque se prioriza el ejemplo que se tiene a nivel de la esquema.
+    El Script por defecto si encuentra un ejemplo a nivel de esquema lo coge y lo pone en el apartado de componentes y luego lo referncia.
+
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: Retrieves a list of users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successfully retrieved list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        name:
+                          type: string
+                        email:
+                          type: string
+                          format: email
+                        address:
+                          type: object
+                          properties:
+                            street:
+                              type: string
+                            city:
+                              type: string
+                            contacts:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  contactType:
+                                    type: string
+                                  phoneNumbers:
+                                    type: array
+                                    items:
+                                      type: string
+                                    example:
+                                      - '+1234567890'
+                                      - '+0987654321'
+                          example:
+                            street: '123 Main St'
+                            city: 'Springfield'
+                            contacts:
+                              - contactType: 'home'
+                                phoneNumbers:
+                                  - '+1234567890'
+                                  - '+0987654321'
+                              - contactType: 'work'
+                                phoneNumbers:
+                                  - '+1122334455'
+                                  - '+5544332211'
+                example:
+                  users:
+                    - id: 1
+                      name: John Doe
+                      email: john.doe@example.com
+                      address:
+                        street: '456 Elm St'
+                        city: 'Springfield'
+                        contacts:
+                          - contactType: 'home'
+                          - contactType: 'work'
+                    - id: 2
+                      name: Jane Smith
+                      email: jane.smith@example.com
+                      address:
+                        street: '789 Maple Ave'
+                        city: 'Springfield'
+                        contacts:
+                          - contactType: 'home'
+                          - contactType: 'work'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                example:
+                  code: 500
+                  message: Internal server error

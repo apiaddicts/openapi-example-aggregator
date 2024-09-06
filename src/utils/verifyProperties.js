@@ -5,29 +5,27 @@ const _ = require('lodash')
 module.exports = function () {
 
   return function verifyProperties(obj, properties) {
-    return properties
-    .every((property) => {
-      
-          let propertyPath = property.split(".").slice(0, -1) ;
+    return properties.every((property) => {
+      const propertyPath = property.split(".").filter(Boolean); 
 
+      if (_.isArray(_.get(obj, propertyPath.slice(0, -1)))) {
+        const parentArray = _.get(obj, propertyPath.slice(0, -1));
+        const lastProperty = propertyPath[propertyPath.length - 1];
 
-          if (_.isArray(_.get(obj, propertyPath))) {
-          
-            const propertie = [ property.split(".").pop() ]
-                        
-            return _.get(obj, propertyPath).every((item) => verifyProperties(item, propertie ));
-          
-          } else if (_.isArray(_.get(obj, propertyPath[0]))) {
+        return parentArray.every((item) => verifyProperties(item, [lastProperty]));
 
-      
-            const subproperties = properties.map(el => el.split('.').slice(1).join('.'))
-            
-            return _.get(obj, propertyPath[0]).every((item) => verifyProperties(item, subproperties))
-      
-          } else {
-            return _.has(obj, property) 
-          }
-        }
-    );
-  }
+      } else if (_.isArray(_.get(obj, propertyPath[0]))) {
+        const parentArray = _.get(obj, propertyPath[0]);
+
+        const subProperties = properties
+          .filter((prop) => prop.startsWith(propertyPath[0]))
+          .map((prop) => prop.split('.').slice(1).join('.'))
+          .filter(Boolean); 
+
+        return parentArray.every((item) => verifyProperties(item, subProperties));
+      }
+
+      return _.has(obj, property);
+    });
+  };
 }
