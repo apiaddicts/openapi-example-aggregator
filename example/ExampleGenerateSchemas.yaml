@@ -1,7 +1,10 @@
 openapi: 3.0.3
 info:
   title: Example API
-  description: This is an example API that uses references for its responses and schemas.
+  description: >-
+    Esto es un ejemplo que nos puede llegar , un esquema referenciado y que tenga a su mismo nivel de esquema un ejemplo.
+
+    Esto lo que hara es recoger este ejemplo y crearlo en el apartado de componentes y luego referenciarlo , por ultimo se elimina el que tiene a nivel de esquema.
   version: 1.0.0
 paths:
   /users:

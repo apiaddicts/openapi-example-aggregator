@@ -1,6 +1,8 @@
 openapi: 3.0.3
 info:
   title: User API
+  description: >-
+    Esto es un ejemplo para ver como se generan los ejemplos para los esquemas que se encuentran referenciados y que tienen la propiedad "items"
   version: 1.0.0
 paths:
   /user:

@@ -1,7 +1,9 @@
 openapi: 3.0.3
 info:
   title: Example API
-  description: This is an example API that uses references for its responses and schemas.
+  description: >-
+    No se llega a realizar nada debido a que tienen la propiedad "examples" , el script por defecto en el momento
+    que encuentra una propiedad con el nombre "examples no llega a realizar nada y no se llega a generar un ejemplo
   version: 1.0.0
 paths:
   /users:
