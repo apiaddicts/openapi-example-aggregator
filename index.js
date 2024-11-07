@@ -74,7 +74,6 @@ Object.keys(definition.paths).forEach(path => {
                 }
 
                 if (response?.['$ref'] && !_.get(definition, `${property}.content.application/json.examples`)) {
-                    console.log('entro')
                     if (_.get(response, 'content.application/json.example')) {
                         _.unset(definition, `${property}.content.application/json.example`);
                     }
