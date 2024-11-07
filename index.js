@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
-'use strict'
+'use strict';
 
 const _ = require('lodash');
-const { getName, getProperty } = require('./src/utils/schemaUtils');
+const fs = require('fs');
+const path = require('path');
+const { getName ,getNameExample, getProperty } = require('./src/utils/schemaUtils');
+
+const { verifyProperties , errorsList} = require('./src/utils/verifyProperties')
+
 const createComponent = require("./src/generator/createComponent")();
 
 const argv = require('yargs')(process.argv.slice(2))
@@ -11,7 +16,8 @@ const argv = require('yargs')(process.argv.slice(2))
     .option('f', {
         alias: 'file',
         describe: 'Path to openapi file',
-        type: 'string'
+        type: 'string',
+        demandOption: true // Hacer que el archivo sea obligatorio
     })
     .example('\x1b[32m $0 -f /path/to/openapi.yaml \x1b[0m')
     .example('\x1b[32m $0 -f /path/to/openapi.yml \x1b[0m')
@@ -21,82 +27,75 @@ const argv = require('yargs')(process.argv.slice(2))
 
 global.definition = require('./src/parser/definition.js')();
 
-Object.keys(global.definition.paths).forEach(path => {
 
-    Object.keys(global.definition.paths[path]).forEach(method => {
-        
-        const methodObj = global.definition.paths[path][method];
+function generateExample(property, schemaPath, nameExample, example , nameSchema) {
+    const exampleKey = `${property}.content.application/json.examples.${nameExample}`;
+    const routeKey = createComponent(definition, example, exampleKey);
+
+
+    const validate = verifyProperties(example, schemaPath , nameSchema , exampleKey);
+
+
+    if (!validate) {
+        return;
+    }
+
+    _.unset(definition, `${property}.content.application/json.example`);
+    _.set(definition, exampleKey, { $ref: routeKey });
+
+    
+    require('./src/utils/sucess')(`Example generated in ${exampleKey.replace('paths./', '#/').replace(/\./g, '/')}`);
+
+}
+
+
+Object.keys(definition.paths).forEach(path => {
+    Object.keys(definition.paths[path]).forEach(method => {
+        const methodObj = definition.paths[path][method];
 
         Object.keys(methodObj.responses ?? []).forEach(key => {
-
             const response = methodObj.responses[key]; 
             const property = getProperty(response, path, method, key);
             const schemaPath = `${property}.content.application/json.schema`; 
-            const nameExample = getName(schemaPath, key);
 
 
-            if(_.get(global.definition, schemaPath)?.['example'] || !_.get(global.definition, schemaPath)?.['$ref']){  
-                
-                const exampleKey = `${property}.content.application/json.examples.${nameExample}`; 
-
-                if(_.get(global.definition, schemaPath)?.['example']){ 
-
-                    const example = _.get(global.definition, schemaPath)?.['example'];
-                    const routeKey = createComponent(global.definition, example, exampleKey);
-
-                    _.unset(global.definition, `${property}.content.application/json.schema.example`)
-                    _.set(global.definition, `${property}.content.application/json.examples.${nameExample}`, { $ref: routeKey });
-
-                    require('./src/utils/sucess')(`Example generated for ${exampleKey}`)
-
-                }
-                
-            } 
-
-            if (_.get(global.definition, `${property}.content.application/json.example`)) {
-
-                const exampleKey = `${property}.content.application/json.examples.${nameExample}`;
-                const example = _.get(global.definition, `${property}.content.application/json.example`);
-
-                const routeKey = createComponent(global.definition, example, exampleKey);
-
-                if(_.get(global.definition, `${property}.content.application/json.example`)){
-
-                    _.unset(global.definition, `${property}.content.application/json.example`)
-                    _.set(global.definition, `${property}.content.application/json.examples.${nameExample}`, { $ref: routeKey });
-
-                    require('./src/utils/sucess')(`Example generated for ${exampleKey}`)
-
+            const nameExample = getNameExample(schemaPath);
+            const schema = _.get(definition, schemaPath);
+            const schemaDetails = require('./src/parser/refs.js')(schema, definition);
+            
+        
+            if (schema) {
+                if (schema.example) {
+                    generateExample(property, schemaDetails, nameExample, schema.example , getName(schemaPath));
                 }
 
+                if (_.get(response, 'content.application/json.example')) {
+                    generateExample(property, schemaDetails, nameExample, _.get(response, 'content.application/json.example') , getName(schemaPath));
+                }
+
+                if (response?.['$ref'] && !_.get(definition, `${property}.content.application/json.examples`)) {
+                    console.log('entro')
+                    if (_.get(response, 'content.application/json.example')) {
+                        _.unset(definition, `${property}.content.application/json.example`);
+                    }
+                    require('./src/generator/examples.js')(schema, definition, `${property}.content.application/json.examples.${nameExample}` , schemaDetails , getName(schemaPath))
+                }
             }
-            
-            if (response?.['$ref'] && !_.get(global.definition, `${property}.content.application/json.examples`)) {
 
-                if(_.get(global.definition, `${property}.content.application/json.example`)){
-                    _.unset(global.definition, `${property}.content.application/json.example`)
-                }
-
-                const exampleKey = `${property}.content.application/json.examples.${nameExample}`; 
-
-                require('./src/generator/examples.js')(_.get(global.definition, schemaPath), global.definition, exampleKey);
-            
-
-            } else if (_.get(response, 'content.application/json.schema') && !_.get(response, 'content.application/json.examples')) {
-
-                const schemaPath = `${property}.content.application/json.schema`; 
-                const exampleKey = `${property}.content.application/json.examples.${nameExample}`; 
-
-                if(_.get(global.definition, `${property}.content.application/json.example`)){
-                    _.unset(global.definition, `${property}.content.application/json.example`)
-                }
-
-
-                require('./src/generator/examples.js')(_.get(global.definition, schemaPath), global.definition, exampleKey);               
+            if (response?.['content']?.['application/json']?.schema && !response?.['content']?.['application/json']?.examples) {
+                require('./src/generator/examples.js')(schema, definition, `${property}.content.application/json.examples.${nameExample}` , schemaDetails , getName(schemaPath))
             }
         });
     });
 });
+
+
+if (errorsList.length !== 0) {
+    console.error('Errors found in the examples:');
+    console.log(errorsList);
+}
+
+
 
 
 require('./src/generator/file.js')();

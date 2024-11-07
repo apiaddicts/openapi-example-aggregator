@@ -29,6 +29,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                GeneratedExampleErrorResponse:
+                  value:
+                    code: 500
+                    message: Internal server error
 components:
   schemas:
     UsersList:

@@ -7,7 +7,6 @@ const handleSubSchemas = (subSchemas, example, definition, depth) => {
   subSchemas.forEach((subSchema) => {
     const subExample = require('../generator/buildExample')(subSchema, definition, depth + 1);
     example.properties = _.merge(example.properties, subExample.properties);
-    example.required = _.union(example.required, subExample.required);
     example.example = _.merge(example.example, subExample.example);
   });
 };
@@ -38,9 +37,8 @@ const handleProperties = (schema, example, definition, depth) => {
           const arrayRefSchema = fetchExample(propertySchema.items, definition);
           handleRequiredReferences(arrayRefSchema, example, definition, currentPath);
 
-          if (arrayRefSchema.required) {
-            example.required = _.union(example.required, arrayRefSchema.required.map((item) => `${currentPath}.${item}`));
-          }
+          // #
+          // Removed the update to `example.required` here
         }
       } 
 
@@ -59,9 +57,8 @@ const handleProperties = (schema, example, definition, depth) => {
           _.set(example.example, property, propertyExample.example);
         }
 
-        example.required = _.union(example.required, propertyExample.required.map((item) => {
-          return schema.type === 'array' ? item : `${property}.${item}`;
-        }));
+        //#
+        // Removed the update to `example.required` here
       }
     });
 
@@ -80,19 +77,14 @@ const handleRequiredReferences = (schema, example, definition, parentPath = '' ,
       const propertySchema = schema.properties[property];
       const currentPath = parentPath ? `${parentPath}.${property}` : property;
 
-      if (schema.required && schema.required.includes(property)) {
-        example.required.push(currentPath);
-      }
-
+      //#
+      // Removed the part that adds the property to `example.required`
+      
       if (propertySchema.type === 'object') {
         handleRequiredReferences(propertySchema, example, definition, currentPath, depth + 1);
       } else if (propertySchema.type === 'array' && propertySchema.items && propertySchema.items.$ref) {
         const arrayRefSchema = fetchExample(propertySchema.items, definition);
         handleRequiredReferences(arrayRefSchema, example, definition, currentPath, depth + 1);
-
-        if (arrayRefSchema.required) {
-          example.required = _.union(example.required, arrayRefSchema.required.map((item) => `${currentPath}.${item}`));
-        }
       } else if (propertySchema.$ref) {
         const refSchema = fetchExample(propertySchema, definition);
         handleRequiredReferences(refSchema, example, definition, currentPath, depth + 1);
@@ -127,9 +119,7 @@ const handleItems = (schema, example, definition, depth, property = null) => {
       arrExample.push(itemsExample.example);
     }
 
-    example.required = _.union(example.required, itemsExample.required.map((item) => {
-      return _.isEmpty(property) ? item : `${property}.${item}`;
-    }));
+    // Removed the update to `example.required` here
   }
 
   if (_.isNull(property)) {

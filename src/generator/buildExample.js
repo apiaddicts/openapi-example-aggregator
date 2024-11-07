@@ -26,7 +26,7 @@ function mergeAndDeduplicate(value1, value2) {
 
 module.exports = function () {
   return function buildExample (schema, definition, depth = 0) {
-    const example = { properties: {}, required: [], example: {} };
+    const example = { properties: {} ,example: {} };
   
     if (depth > MAX_DEPTH_LEVEL) {
       return example;
@@ -50,7 +50,9 @@ module.exports = function () {
 
     example.example = mergeAndDeduplicate(example.example, example.properties);
 
-    return example;
+  
+
+    return example
   }
 }()
 

@@ -1,8 +1,15 @@
 
 const _ = require('lodash');
 
-function getName(schemaPath, key) {
-    // Obtener el valor de $ref si existe
+
+function getName(schemaPath) {
+    const ref = _.get(global.definition, schemaPath)?.['$ref'];
+
+
+    return  ref?.split('/')?.pop() || schemaPath.replace(/\./g, '/').replace("paths/", '#') || 'Anonymous'
+}
+
+function getNameExample(schemaPath) {
     const ref = _.get(global.definition, schemaPath)?.['$ref'];
 
     const name = ref ? ref.split('/').pop() : generateShortUUID();
@@ -25,4 +32,15 @@ function generateShortUUID() {
         return r.toString(16);
     });
 }
-module.exports = { getName, getProperty };
+
+
+function findObject(obj, propertiesArray) {
+    if (propertiesArray.length < 1 || !obj) {
+        return obj; 
+    }
+    let property = propertiesArray.shift(); 
+    return findObject(obj[property], propertiesArray); 
+}
+
+
+module.exports = { getName, getNameExample , getProperty , findObject }
