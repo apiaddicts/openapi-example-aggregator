@@ -1,5 +1,6 @@
 {
-  "name": "Convert schemas to examples",
+  "name": "openapi-example-aggregator",
+  "description": "openapi-example-aggregator",
   "version": "1.1.0",
   "bin": {
     "oea": "index.js"
@@ -18,5 +19,12 @@
     "path": "0.12.7",
     "sinon": "18.0.0",
     "yargs": "17.7.2"
-  }
+  },
+  "license": "ISC",
+  "author": "apiaddicts",
+  "keywords": [
+    "openapi",
+    "swagger",
+    "tool"
+  ]
 }
