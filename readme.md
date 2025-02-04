@@ -1,4 +1,4 @@
-# 🛠️ openapi-example-aggregator ![Release](https://img.shields.io/badge/release-1.1.0-purple) ![OpenApi](https://img.shields.io/badge/-openapi-%23Clojure?style=flat&logo=openapiinitiative&logoColor=white) [![License: LGPL v3](https://img.shields.io/badge/license-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+# 🛠️ openapi-example-aggregator ![Release](https://img.shields.io/badge/release-1.1.0-purple) [![NPM](https://img.shields.io/badge/npm-%23CB3837.svg?style=flat&logo=npm&logoColor=white)](https://www.npmjs.com/package/openapi-example-aggregator) ![OpenApi](https://img.shields.io/badge/-openapi-%23Clojure?style=flat&logo=openapiinitiative&logoColor=white) [![License: LGPL v3](https://img.shields.io/badge/license-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 **openapi-example-aggregator** creates automatic examples from Openapi 3.0.
 
@@ -30,7 +30,7 @@ Feel free to drop by and greet us on our GitHub discussion or Discord chat. You 
 
 # 📑 Getting started
 
-![NPM](https://img.shields.io/badge/openapi--example--aggregator-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)
+[![NPM](https://img.shields.io/badge/openapi--example--aggregator-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/openapi-example-aggregator)
 
 ### Install package
 
