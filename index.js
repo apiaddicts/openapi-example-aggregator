@@ -17,7 +17,7 @@ const argv = require('yargs')(process.argv.slice(2))
         alias: 'file',
         describe: 'Path to openapi file',
         type: 'string',
-        demandOption: true // Hacer que el archivo sea obligatorio
+        demandOption: true 
     })
     .example('\x1b[32m $0 -f /path/to/openapi.yaml \x1b[0m')
     .example('\x1b[32m $0 -f /path/to/openapi.yml \x1b[0m')
