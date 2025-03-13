@@ -17,10 +17,17 @@ const argv = require('yargs')(process.argv.slice(2))
         alias: 'file',
         describe: 'Path to openapi file',
         type: 'string',
-        demandOption: true // Hacer que el archivo sea obligatorio
+        demandOption: true 
+    })
+    .option('o', {
+        alias: 'overwrite',
+        describe: 'Overwrite the existing file if it exists',
+        type: 'boolean',
+        default: false
     })
     .example('\x1b[32m $0 -f /path/to/openapi.yaml \x1b[0m')
     .example('\x1b[32m $0 -f /path/to/openapi.yml \x1b[0m')
+    .example('\x1b[32m $0 -f /path/to/openapi.yaml -o \x1b[0m')
     .help()
     .alias('h', 'help')
     .argv;
@@ -90,11 +97,9 @@ Object.keys(definition.paths).forEach(path => {
 
 
 if (errorsList.length !== 0) {
-    console.error('Errors found in the examples:');
+    require('./src/utils/warning')(`The file could not be generated due to errors encountered in the examples.`);
     console.log(errorsList);
+} else {
+    require('./src/generator/file.js')();
 }
 
-
-
-
-require('./src/generator/file.js')();

@@ -24,12 +24,11 @@ module.exports = (function () {
 
     isValid = verifyProperties(example.example, schemaDetails, nameSchema , exampleKey);
 
-    if (!isValid) {
+    if (!isValid || _.isEmpty(example)) {
       require('../utils/warning')(`Error in the generated example for ${exampleKey}`);
       return;
     }
     
-
     setExample(definition, example.example, exampleKey);
 
   };
@@ -62,9 +61,12 @@ const validateComposedSchemas = (schema, definition , exampleKey) => {
 
     const subNameSchema = element.$ref ? element?.$ref.split('/').pop() : 'AnonymousSchema';
 
+    
+
     if (!verifyProperties(subExample.example, subSchema, subNameSchema , exampleKey)) {
       isValid = false;
     }
+
   });
 
   return isValid;
