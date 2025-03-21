@@ -1,7 +1,7 @@
 {
   "name": "openapi-example-aggregator",
   "description": "openapi-example-aggregator",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "bin": {
     "oea": "index.js"
   },
