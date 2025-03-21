@@ -6,26 +6,41 @@ const argv = require('yargs').argv;
 const yaml = require('js-yaml');
 
 module.exports = (function () {
+  function saveFile(filePath, data, extension) {
+    const formattedData = (extension === '.yaml' || extension === '.yml')  ? yaml.dump(data, { noRefs: true })  : JSON.stringify(data, null, 2);
+    fs.writeFileSync(filePath, formattedData, 'utf8');
+    console.info(`The ${extension.toUpperCase()} file has been saved as ${filePath}`);
+  }
+
   return function generatedFile() {
     try {
       const ext = _path.extname(argv.file).toLowerCase();
-      const newFileBaseName = `generated-${_path.basename(argv.file, ext)}`;
+      const fileCurrent = _path.basename(argv.file, ext)
+      const newFileBaseName = `generated-${fileCurrent}`;
       let newFile;
+
+      const handleExistingFile = (filePath, extension) => {
+
+        const fileWithExtension = `${filePath}${extension}`
+
+        if (fs.existsSync(fileWithExtension) && argv.overwrite) {
+          saveFile(fileWithExtension, global.definition, extension);
+          return true;
+        }
+        return false;
+      };
 
       switch (ext) {
         case '.yaml':
         case '.yml':
-          newFile = _path.join(_path.dirname(argv.file), `${newFileBaseName}.yaml`);
-          fs.accessSync(_path.dirname(newFile), fs.constants.W_OK);
-          fs.writeFileSync(newFile, yaml.dump(global.definition, { noRefs: true }), 'utf8');
-          console.info(`The YAML file has been saved as ${newFile}`);
-          break;
-
         case '.json':
-          newFile = _path.join(_path.dirname(argv.file), `${newFileBaseName}.json`);
-          fs.accessSync(_path.dirname(newFile), fs.constants.W_OK);
-          fs.writeFileSync(newFile, JSON.stringify(global.definition, null, 2), 'utf8');
-          console.info(`The JSON file has been saved as ${newFile}`);
+          
+          if (!handleExistingFile(fileCurrent, ext)) {
+              newFile = _path.join(_path.dirname(argv.file), `${newFileBaseName}${ext}`);
+              fs.accessSync(_path.dirname(newFile), fs.constants.W_OK);
+              saveFile(newFile, global.definition, ext);
+            }
+
           break;
 
         default:
