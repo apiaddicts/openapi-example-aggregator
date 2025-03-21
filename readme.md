@@ -42,9 +42,10 @@ npm i openapi-example-aggregator -g
 
 #### `Arguments`
 
-| argv   | a   | description       |
-| ------ | --- | ----------------- |
-| --file | -f  | path openapi file |
+| argv        | a   | description                 |
+| ----------- | --- | --------------------------- |
+| --file      | -f  | path openapi file           |
+| --overwrite | -o  | overwrite the original file |
 
 #### `Normal` usage
 
